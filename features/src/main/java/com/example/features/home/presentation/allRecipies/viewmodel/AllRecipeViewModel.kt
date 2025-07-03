@@ -7,6 +7,7 @@ import com.example.features.home.domain.AllRecipes.usecase.AllRecipesUseCase
 import com.example.features.home.presentation.allRecipies.AllRecipesIntent
 import com.example.features.home.presentation.allRecipies.mapper.AllRecipesUiMapper
 import com.example.features.home.presentation.allRecipies.uistate.AllRecipesUiState
+import com.example.features.home.presentation.allRecipies.uistate.AllRecipesUiState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,7 @@ class AllRecipeViewModel @Inject constructor(
     private val allRecipesUiMapper: AllRecipesUiMapper
 ) : ViewModel() {
 
-    private val _allRecipes = MutableStateFlow<AllRecipesUiState>(AllRecipesUiState.LOADING)
+    private val _allRecipes = MutableStateFlow<AllRecipesUiState>(LOADING)
     val allRecipes: StateFlow<AllRecipesUiState> = _allRecipes
 
     fun handleEvent(event: AllRecipesIntent) {
@@ -28,7 +29,7 @@ class AllRecipeViewModel @Inject constructor(
             AllRecipesIntent.LoadPage -> {
                 viewModelScope.launch {
                     when (val res = allRecipesUseCase()) {
-                        is Result.Error -> _allRecipes.value = AllRecipesUiState.ErrorUiState(
+                        is Result.Error -> _allRecipes.value = ErrorUiState(
                             errorMessage = res.throwable.message
                         )
 
@@ -41,7 +42,7 @@ class AllRecipeViewModel @Inject constructor(
             }
 
             AllRecipesIntent.RetryPageLoad -> _allRecipes.update {
-                AllRecipesUiState.LOADING
+                LOADING
             }
         }
     }
